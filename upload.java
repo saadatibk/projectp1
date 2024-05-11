@@ -1,9 +1,11 @@
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     
@@ -22,27 +24,42 @@ public class Main {
     }
 
     static class Compressor {
-        public static byte[] compress(String text) {
+        public byte[] compress(String text) {
             List<Byte> compressedList = new ArrayList<>();
-            
-            int count = 1;
-            for (int i = 1; i <= text.length(); i++) {
-                if (i == text.length() || text.charAt(i) != text.charAt(i - 1)) {
-                    compressedList.add((byte) text.charAt(i - 1));
-                    compressedList.add((byte) count);
-                    count = 1;
-                } else {
-                    count++;
-                }
+            Map<String, Integer> wordToNumber = new HashMap<>();
+            int wordCount = 0;
+
+             // Split the text into words using space as delimiter
+             String[] words = text.split("\\s+");
+
+            for (String word : words) {
+            // Check if the word is already assigned a number
+            if (!wordToNumber.containsKey(word)) {
+            // If not, assign a new number to the word
+            wordToNumber.put(word, ++wordCount);
             }
-            
-            byte[] compressedArray = new byte[compressedList.size()];
+
+            // Get the number assigned to the word
+            int wordNumber = wordToNumber.get(word);
+
+            // Add the word number to the compressed list
+            compressedList.add((byte) wordNumber);
+
+            // If the word is not the last one, add a space delimiter
+            if (!word.equals(words[words.length - 1])) {
+                compressedList.add((byte) ' ');
+            }
+        }
+
+        byte[] compressedArray = new byte[compressedList.size()];
             for (int i = 0; i < compressedList.size(); i++) {
                 compressedArray[i] = compressedList.get(i);
             }
-            
-            return compressedArray;
-        }
+
+        return compressedArray;
+}
+
+
     }
 
     static class CompressedFileWriter {
@@ -75,8 +92,9 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            String originalText = TxtReader.readTextFile("mytext.txt");
-            byte[] compressedData = Compressor.compress(originalText);
+            String originalText = TxtReader.readTextFile("/Users/saadatibakova/Desktop/mytext.txt");
+            Compressor compressor = new Compressor();
+            byte[] compressedData = compressor.compress(originalText);
             CompressedFileWriter.writeCompressedFile(compressedData, "compressed");
             String decompressedText = Decompressor.decompress(compressedData);
             boolean isSame = TextComparer.isSame(originalText, decompressedText);
