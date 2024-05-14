@@ -29,37 +29,28 @@ public class Main {
             Map<String, Integer> wordToNumber = new HashMap<>();
             int wordCount = 0;
 
-             // Split the text into words using space as delimiter
-             String[] words = text.split("\\s+");
+            String[] words = text.split("\\s+");
 
             for (String word : words) {
-            // Check if the word is already assigned a number
-            if (!wordToNumber.containsKey(word)) {
-            // If not, assign a new number to the word
-            wordToNumber.put(word, ++wordCount);
+                if (!wordToNumber.containsKey(word)) {
+                    wordToNumber.put(word, ++wordCount);
+                }
+
+                int wordNumber = wordToNumber.get(word);
+
+                // Add count of the word
+                compressedList.add((byte) word.length());
+                // Add the word number to the compressed list
+                compressedList.add((byte) wordNumber);
             }
 
-            // Get the number assigned to the word
-            int wordNumber = wordToNumber.get(word);
-
-            // Add the word number to the compressed list
-            compressedList.add((byte) wordNumber);
-
-            // If the word is not the last one, add a space delimiter
-            if (!word.equals(words[words.length - 1])) {
-                compressedList.add((byte) ' ');
-            }
-        }
-
-        byte[] compressedArray = new byte[compressedList.size()];
+            byte[] compressedArray = new byte[compressedList.size()];
             for (int i = 0; i < compressedList.size(); i++) {
                 compressedArray[i] = compressedList.get(i);
             }
 
-        return compressedArray;
-}
-
-
+            return compressedArray;
+        }
     }
 
     static class CompressedFileWriter {
@@ -73,16 +64,29 @@ public class Main {
     static class Decompressor {
         public static String decompress(byte[] compressedData) {
             StringBuilder decompressedText = new StringBuilder();
-            for (int i = 0; i < compressedData.length; i += 2) {
-                byte character = compressedData[i];
-                int count = compressedData[i + 1] & 0xFF; // Convert byte to unsigned int
+            int i = 0;
+            while (i < compressedData.length) {
+                int count = compressedData[i++];
+                int wordNumber = compressedData[i++];
+                String word = getWordFromNumber(wordNumber);
                 for (int j = 0; j < count; j++) {
-                    decompressedText.append((char) character);
+                    decompressedText.append(word);
                 }
             }
             return decompressedText.toString();
         }
+
+        private static String getWordFromNumber(int wordNumber) {
+            for (Map.Entry<String, Integer> entry : wordToNumber.entrySet()) {
+                if (entry.getValue() == wordNumber) {
+                    return entry.getKey();
+                }
+            }
+            return null; // Handle if wordNumber is not found
+        }
     }
+
+    static Map<String, Integer> wordToNumber = new HashMap<>();
 
     static class TextComparer {
         public static boolean isSame(String originalText, String decompressedText) {
