@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Main {
+public class compressor {
     
     static class TxtReader {
         public static String readTextFile(String filename) throws IOException {
@@ -104,7 +104,6 @@ public class Main {
             boolean isSame = TextComparer.isSame(originalText, decompressedText);
             System.out.println("Is decompressed text same as original? " + isSame);
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
