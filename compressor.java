@@ -1,14 +1,15 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+
 public class compressor {
-    
+
     static class TxtReader {
         public static String readTextFile(String filename) throws IOException {
             StringBuilder stringBuilder = new StringBuilder();
@@ -25,9 +26,9 @@ public class compressor {
 
     static class Compressor {
         public byte[] compress(String text) {
-            List<Byte> compressedList = new ArrayList<>();
             Map<String, Integer> wordToNumber = new HashMap<>();
             int wordCount = 0;
+            StringBuilder compressedText = new StringBuilder();
 
             String[] words = text.split("\\s+");
 
@@ -38,15 +39,14 @@ public class compressor {
 
                 int wordNumber = wordToNumber.get(word);
 
-                // Add count of the word
-                compressedList.add((byte) word.length());
-                // Add the word number to the compressed list
-                compressedList.add((byte) wordNumber);
+                // Add the word number to the compressed text
+                compressedText.append((char) wordNumber);
             }
 
-            byte[] compressedArray = new byte[compressedList.size()];
-            for (int i = 0; i < compressedList.size(); i++) {
-                compressedArray[i] = compressedList.get(i);
+            // Convert compressed text to byte array
+            byte[] compressedArray = new byte[compressedText.length()];
+            for (int i = 0; i < compressedText.length(); i++) {
+                compressedArray[i] = (byte) compressedText.charAt(i);
             }
 
             return compressedArray;
@@ -55,38 +55,41 @@ public class compressor {
 
     static class CompressedFileWriter {
         public static void writeCompressedFile(byte[] compressedData, String filename) throws IOException {
-            try (FileOutputStream fos = new FileOutputStream(filename + ".sc")) {
-                fos.write(compressedData);
+            try (FileOutputStream result = new FileOutputStream(filename + ".sc")) {
+                result.write(compressedData);
             }
         }
     }
 
     static class Decompressor {
         public static String decompress(byte[] compressedData) {
+            Map<Integer, String> numberToWord = new HashMap<>();
+            int wordCount = 0;
+
             StringBuilder decompressedText = new StringBuilder();
             int i = 0;
             while (i < compressedData.length) {
                 int count = compressedData[i++];
                 int wordNumber = compressedData[i++];
-                String word = getWordFromNumber(wordNumber);
+                String word = numberToWord.get(wordNumber);
+                if (word == null) {
+                    word = String.valueOf(++wordCount);
+                    numberToWord.put(wordNumber, word);
+                }
                 for (int j = 0; j < count; j++) {
                     decompressedText.append(word);
                 }
             }
             return decompressedText.toString();
         }
-
-        private static String getWordFromNumber(int wordNumber) {
-            for (Map.Entry<String, Integer> entry : wordToNumber.entrySet()) {
-                if (entry.getValue() == wordNumber) {
-                    return entry.getKey();
-                }
+    }
+    public class DecompressedFileWriter {
+        public static void writeDecompressedFile(String decompressedText, String filename) throws IOException {
+            try (BufferedWriter decompressed_result = new BufferedWriter(new FileWriter(filename))) {
+                decompressed_result.write(decompressedText);
             }
-            return null; // Handle if wordNumber is not found
         }
     }
-
-    static Map<String, Integer> wordToNumber = new HashMap<>();
 
     static class TextComparer {
         public static boolean isSame(String originalText, String decompressedText) {
@@ -103,7 +106,10 @@ public class compressor {
             String decompressedText = Decompressor.decompress(compressedData);
             boolean isSame = TextComparer.isSame(originalText, decompressedText);
             System.out.println("Is decompressed text same as original? " + isSame);
+            DecompressedFileWriter.writeDecompressedFile(decompressedText, "decompressed.txt");
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
+
