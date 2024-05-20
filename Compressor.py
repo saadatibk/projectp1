@@ -52,7 +52,7 @@ if __name__ == "__main__":
     compressor = Compressor()
     
     # Compress a file
-    compressor.compress_file('/Users/saadatibakova/Desktop/mytext.txt', 'compressed.txt')
+    compressor.compress_file('mytext.txt', 'compressed.txt')
     
     # Decompress the file
     compressor.decompress_file('compressed.txt', 'output.txt')
