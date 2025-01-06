@@ -28,7 +28,6 @@ class Compressor:
                 decompressed_words.append(self.num_to_word[word_id])
             else:
                 raise ValueError(f"ID {word_id} not found in the decompression dictionary.")
-
         return ' '.join(decompressed_words)
 
     def compress_file(self, input_file, output_file):
@@ -52,7 +51,7 @@ if __name__ == "__main__":
     
     # Compress a file
     compressor.compress_file('mytext.txt', 'compressed.txt')
-    
+
     # Decompress the file
     compressor.decompress_file('compressed.txt', 'output.txt')
 
