@@ -46,8 +46,7 @@ class Compressor:
             f_out.write(decompressed_text)
         print(f"File '{input_file}' decompressed to '{output_file}'")
 
-
-if __name__ == "__main__":
+    if __name__ == "__main__":
     compressor = Compressor()
     
     # Compress a file
