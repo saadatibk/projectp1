@@ -26,7 +26,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ullamcorper mag
 To compress this text file, you can run: 
 java TextCompressor mytext.txt compressed.sc
 
-This will compress the text file `mytext.txt` and save the compressed output to a file named `compressed.sc`.
+This will compress the text file `mytext.txt` and save the compressed output to `compressed.sc`.
 
 To decompress the compressed file, you can run: 
 java TextCompressor compressed.sc decompressed.txt
