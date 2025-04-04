@@ -32,5 +32,3 @@ To decompress the compressed file, you can run:
 java TextCompressor compressed.sc decompressed.txt
 
 This will decompress the compressed file `compressed.sc`.
-
-## License
