@@ -1,6 +1,6 @@
 ## TextCompressor
 
-TextCompressor is a simple Java program that compresses and decompresses text files using a basic word-based compression technique.
+TextCompressor is a simple Python program that compresses and decompresses text files using a basic word-based compression technique.
 
 ## Features
 
